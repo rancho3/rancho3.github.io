@@ -19,7 +19,7 @@
      
     <meta property="og:type" content="website">
 <meta property="og:title" content="必然是胡说">
-<meta property="og:url" content="https://blog.nobady.cc/archives/index.html">
+<meta property="og:url" content="https://blog.nobady.cc/404.html">
 <meta property="og:site_name" content="必然是胡说">
 <meta property="og:locale">
 <meta property="og:image" content="https://blog.nobady.cc/img/logo.gif">
@@ -111,32 +111,137 @@
 
 
         <main id="main">
-             
+            <style>
+    #footer {
+        display: none;
+    }
 
-<div id="page">
-    <div class="page-title">文章总览 - 1</div>
-    
+    #body-wrap .main {
+        height: calc(100vh - 70px);
+        align-items: center;
+    }
 
-    
-    
-        
-        <h4 class="archive-year">2021</h4>
-    
-        <div class="article-item">
-            
-            <div class="article-item-info">
-                <div class="article-item-date">
-                    <time>
-                        <i class="far fa-calendar-alt"></i>
-                        2021-12-17
-                    </time>
-                </div>
-                <a class="article-item-title" href="/2021/12/17/%E5%A6%82%E4%BD%95%E5%9C%A8-github-pages-%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA-hexo-%E5%8D%9A%E5%AE%A2/">如何在 github pages 搭建一个 hexo 博客</a>
-            </div>
-        </div>
+    #error-warp {
+        width: 400px;
+        height: 400px;
+        border-radius: 10px;
+        display: flex;
+        background: var(--main-bg);
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
 
-     
+    #error {
+        color: var(--error-text-color);
+        font-size: 30px;
+        position: relative;
+        margin-bottom: 40px;
+        text-align: center;
+    }
 
+    #error::before,
+    #error::after {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        content: attr(content);
+    }
+
+    #error::before {
+        left: 1px;
+        text-shadow: -1px 0 red;
+        background: var(--main-bg);
+        animation: noise-before 1s ease-in infinite;
+    }
+
+    #error::after {
+        left: -2px;
+        text-shadow: -1px 0 blue;
+        background: var(--main-bg);
+        animation: noise-after 1.5s ease-out infinite;
+    }
+
+    .back-home {
+        display: inline-block;
+        border-radius: 10px;
+        margin-top: .5rem;
+        padding: .3rem 1.5rem;
+        background: var(--main);
+        color: #fff;
+    }
+
+    .back-home:hover {
+        color: #fff !important;
+    }
+
+    @media screen and (max-width: 900px) {
+        #error-warp {
+            width: 80%;
+        }
+    }
+
+    @keyframes noise-before {
+        0% {
+            clip-path: inset(11% 0 33% 0);
+        }
+
+        20% {
+            clip-path: inset(99% 0 44% 0);
+        }
+
+        40% {
+            clip-path: inset(33% 0 55% 0);
+        }
+
+        60% {
+            clip-path: inset(66% 0 11% 0);
+        }
+
+        80% {
+            clip-path: inset(22% 0 55% 0);
+        }
+
+        100% {
+            clip-path: inset(33% 0 77% 0);
+        }
+    }
+
+    @keyframes noise-after {
+        0% {
+            clip-path: inset(22% 0 44% 0);
+        }
+
+        20% {
+            clip-path: inset(77% 0 11% 0);
+        }
+
+        40% {
+            clip-path: inset(33% 0 55% 0);
+        }
+
+        60% {
+            clip-path: inset(66% 0 88% 0);
+        }
+
+        80% {
+            clip-path: inset(22% 0 66% 0);
+        }
+
+        100% {
+            clip-path: inset(33% 0 77% 0);
+        }
+    }
+</style>
+<div id="error-warp">
+    <div id="error" content="404 Not Found">
+        404 Not Found
+    </div>
+    <a href="/" class="back-home">
+        返回首页
+    </a>
 </div>
         </main>
         <section id="rightside">
