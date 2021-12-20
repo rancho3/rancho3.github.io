@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-<title>如何在 github pages 搭建一个 hexo 博客 | 必然是胡说</title>
+<title>如何优雅使用 tmux | 必然是胡说</title>
 <meta name="author" content="">
 <meta name="copyright" content="">
 
@@ -17,16 +17,16 @@
 
 
      
-    <meta name="description" content="1, 安装 node 2, npm install -g hexo-cli 3, 建立一个文件夹, 输入 hexo init blog 4, hexo g 生成静态页面 5, hexo s 建立服务器 6, 登陆 localhost:4000 查看 7, 在 github 建立一个项目, 项目名字是 x.github.io, x 是你的名字 8, 编辑文件夹中的 _config.yml 配置文件,">
+    <meta name="description" content="tmux 的使用为啥要用 tmux 最大的好处是可以看会话中的历史输出以及关闭窗口会, 程序会继续执行   所有窗口tmux ls 新建一个会话tmux new -s bb 进入会话tmux a -t 编号或名字(a的意思是 attach) 离开当前会话Ctrl+b d 关闭当前会话exit 在会话里面列出所有会话Ctrl+b s 重命名会话tmux rename-session -t 0  当前">
 <meta property="og:type" content="article">
-<meta property="og:title" content="如何在 github pages 搭建一个 hexo 博客">
-<meta property="og:url" content="https://blog.nobady.cc/2021/12/17/%E5%A6%82%E4%BD%95%E5%9C%A8-github-pages-%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA-hexo-%E5%8D%9A%E5%AE%A2/">
+<meta property="og:title" content="如何优雅使用 tmux">
+<meta property="og:url" content="https://blog.nobady.cc/2021/12/20/tmux-%E5%8E%86%E5%8F%B2%E8%BE%93%E5%87%BA%E8%AE%B0%E5%BD%95/">
 <meta property="og:site_name" content="必然是胡说">
-<meta property="og:description" content="1, 安装 node 2, npm install -g hexo-cli 3, 建立一个文件夹, 输入 hexo init blog 4, hexo g 生成静态页面 5, hexo s 建立服务器 6, 登陆 localhost:4000 查看 7, 在 github 建立一个项目, 项目名字是 x.github.io, x 是你的名字 8, 编辑文件夹中的 _config.yml 配置文件,">
+<meta property="og:description" content="tmux 的使用为啥要用 tmux 最大的好处是可以看会话中的历史输出以及关闭窗口会, 程序会继续执行   所有窗口tmux ls 新建一个会话tmux new -s bb 进入会话tmux a -t 编号或名字(a的意思是 attach) 离开当前会话Ctrl+b d 关闭当前会话exit 在会话里面列出所有会话Ctrl+b s 重命名会话tmux rename-session -t 0  当前">
 <meta property="og:locale">
 <meta property="og:image" content="https://blog.nobady.cc/img/a.webp">
-<meta property="article:published_time" content="2021-12-17T09:29:59.000Z">
-<meta property="article:modified_time" content="2021-12-19T09:44:42.668Z">
+<meta property="article:published_time" content="2021-12-20T12:48:07.000Z">
+<meta property="article:modified_time" content="2021-12-20T12:59:39.552Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://blog.nobady.cc/img/a.webp">
  
@@ -122,14 +122,14 @@
 <article id="post">
   <div class="post-info">
     <div class="post-title">
-      <h1>如何在 github pages 搭建一个 hexo 博客</h1>
+      <h1>如何优雅使用 tmux</h1>
     </div>
     <div class="post-meta">
       <div class="post-date">
         <i class="far fa-calendar-alt fa-fw post-meta-icon"></i>
         <span class="post-meta-label">
           发表于
-            2021-12-17 |
+            2021-12-20 |
         </span>
         
         <i class="fas fa-history fa-fw post-meta-icon"></i>
@@ -141,40 +141,44 @@
       <div class="post-meta-wordcount">
         <i class="far fa-file-word fa-fw post-meta-icon"></i>
         <span class="post-meta-label">总字数:</span>
-        <span class="word-count">267 | </span>
+        <span class="word-count">656 | </span>
         <i class="far fa-clock fa-fw post-meta-icon"></i>
         <span class="post-meta-label">阅读时长:</span>
-        <span>1分钟</span>
+        <span>2分钟</span>
         
       </div>
     </div>
   </div>
   <div class="post-content">
-    <p>1, 安装 node</p>
-<p>2, npm install -g hexo-cli</p>
-<p>3, 建立一个文件夹, 输入 hexo init blog</p>
-<p>4, hexo g 生成静态页面</p>
-<p>5, hexo s 建立服务器</p>
-<p>6, 登陆 localhost:4000 查看</p>
-<p>7, 在 github 建立一个项目, 项目名字是 x.github.io, x 是你的名字</p>
-<p>8, 编辑文件夹中的 _config.yml 配置文件, 在最后填上</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: git 路径</span><br><span class="line">  branch: main</span><br></pre></td></tr></table></figure>
-<p>8, 安装 hexo git 插件 npm install hexo-deployer-git –save</p>
-<p>9, 配置 ssh 秘钥去连接 github</p>
-<p>10, 部署命令</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
-<p>11, 登陆 x.github.io 就可以看到效果了</p>
-<p>12, 安装管理后台 npm install hexo-admin –save</p>
-<p>13, 在本地 hexo s 之后, 可以 localhost:4000/admin/ 查看</p>
-<p>14, 绑定域名, 打开阿里云, 点击绑定域名, 选择 CNAME 记录, 然后添加 x.github.io</p>
-<p>15, 登陆 github 选择 x.github.io 项目, 然后点击 github pages</p>
-<p>16, 然后在 custom domain 添加域名</p>
-<p>17, 本地 blog/source 新建一个文件, 写入域名, 保存名字为 CNAME</p>
-<p>参考链接</p>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/26625249">https://zhuanlan.zhihu.com/p/26625249</a></p>
-<p>hexo 官网</p>
-<p><a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/commands">https://hexo.io/zh-cn/docs/commands</a></p>
-
+    <p>tmux 的使用<br>为啥要用 tmux 最大的好处是可以看会话中的历史输出<br>以及关闭窗口会, 程序会继续执行  </p>
+<p>所有窗口<br>tmux ls</p>
+<p>新建一个会话<br>tmux new -s bb</p>
+<p>进入会话<br>tmux a -t 编号或名字<br>(a的意思是 attach)</p>
+<p>离开当前会话<br>Ctrl+b d</p>
+<p>关闭当前会话<br>exit</p>
+<p>在会话里面列出所有会话<br>Ctrl+b s</p>
+<p>重命名会话<br>tmux rename-session -t 0 <new-name></p>
+<p>当前会话右边加一个窗格<br>ctrl+b %</p>
+<p>划分上下两个窗格<br>Ctrl+b “</p>
+<p>光标切换到不同窗格<br>trl+b 方向键上下左右  </p>
+<p>关闭当前窗格<br>Ctrl+b x</p>
+<p>调整窗格大小 (mac 按键冲突了)<br>Ctrl+b Ctrl+方向键</p>
+<p>最大化独立窗口, 再使用一次会变回原来大小<br>Ctrl+b z</p>
+<p>当前窗格与上下一个窗格交换位置<br>Ctrl+b {<br>Ctrl+b }</p>
+<p>创建一个新窗口，状态栏会显示多个窗口的信息<br>Ctrl+b c</p>
+<p>从列表中选择窗口<br>Ctrl+b w</p>
+<p>tmux 查看历史输出<br>在会话中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctrl+b [</span><br></pre></td></tr></table></figure>
+<p>即进入历史输出信息查看模式<br>可通过键盘上的上下左右键来滚动历史输出信息。<br>如果要退出查看模式，按下 q 即可  </p>
+<p>重开机自动恢复tmux<br>装插件 tmux-continuum  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">某个位置创建文件夹存放以下插件</span><br><span class="line">git clone https://github.com/tmux-plugins/tmux-resurrect.git</span><br><span class="line">git clone https://github.com/tmux-plugins/tmux-continuum.git</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>配置 tmux  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">vim ~/.tmux.conf</span><br><span class="line"># 但是似乎没效果</span><br><span class="line">set -g default-terminal &quot;screen-256color&quot;</span><br><span class="line"># 历史输出可以看 1 万行</span><br><span class="line">set -g history-limit 10000</span><br><span class="line"></span><br><span class="line"># 鼠标可以滚动命令行, 以及调窗口大小, 点击换窗格</span><br><span class="line">set-option -g mouse on</span><br><span class="line"></span><br><span class="line"># 自动保存 1 分钟保存一次 它会保存到 ~/.tmux/resurrect </span><br><span class="line">run-shell ~/Downloads/tmux/tmux-continuum/continuum.tmux</span><br><span class="line">set -g @continuum-save-interval &#x27;1&#x27;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">更新配置</span><br><span class="line">tmux source-file &lt;path&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">vim ~/.zshrc</span><br><span class="line">#  打开命令行直接进入 tmux</span><br><span class="line"># 一样可以实现自动连接已存在的会话,否则会新开一个</span><br><span class="line">if [[ -z &quot;$TMUX&quot; ]] ;then</span><br><span class="line">    ID=&quot;`tmux ls | grep -vm1 attached | cut -d: -f1`&quot; # get the id of a deattached session</span><br><span class="line">    if [[ -z &quot;$ID&quot; ]] ;then # if not available create a new one</span><br><span class="line">        tmux new-session</span><br><span class="line">    else</span><br><span class="line">        tmux attach-session -t &quot;$ID&quot; # if available attach to it</span><br><span class="line">    fi</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+<p>复制粘贴<br>mac<br>从一开始按住 fn<br>然后 command c v 复制粘贴  </p>
+<p>linux (还没确认)<br>从一开始按住 shift<br>然后 ctrl c v 复制粘贴  </p>
+<p>写的好的链接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">https://www.cnblogs.com/zuoruining/p/11074367.html</span><br><span class="line">阮一峰</span><br><span class="line">http://www.ruanyifeng.com/blog/2019/10/tmux.html</span><br><span class="line">tmux 官网</span><br><span class="line">https://github.com/tmux/tmux/wiki</span><br><span class="line">tmux 中文官网</span><br><span class="line">https://wiki.archlinux.org/title/Tmux_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
   </div>
    
    
@@ -191,14 +195,14 @@
       <div class="post-copyright-type">
           <span class="post-copyright-meta">文章链接: </span>
             <span class="post-copyright-info">
-              <a href="https://blog.nobady.cc/2021/12/17/如何在-github-pages-搭建一个-hexo-博客/" >https://blog.nobady.cc/2021/12/17/如何在-github-pages-搭建一个-hexo-博客/</a>
+              <a href="https://blog.nobady.cc/2021/12/20/tmux-历史输出记录/" >https://blog.nobady.cc/2021/12/20/tmux-历史输出记录/</a>
             </span>
       </div><div class="post-copyright-notice">
           <span class="post-copyright-meta">版权声明: </span>
             <span class="post-copyright-info">本博客所有文章除特别声明外，均采用
               <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/ " target="_blank" >
                   CC BY-NC-SA 4.0 </a> 许可协议。转载请注明来自
-              <a href="https://blog.nobady.cc/2021/12/17/如何在-github-pages-搭建一个-hexo-博客/" target="_blank" >blog.nobady.cc</a>
+              <a href="https://blog.nobady.cc/2021/12/20/tmux-历史输出记录/" target="_blank" >blog.nobady.cc</a>
               ！</span>
       </div>
   </div>
@@ -212,14 +216,15 @@
 
 <div class="pagination-post">
     
-    <a href="/2021/12/20/tmux-%E5%8E%86%E5%8F%B2%E8%BE%93%E5%87%BA%E8%AE%B0%E5%BD%95/">
-      <div class="prev-title"><i class="fas fa-chevron-left"></i>如何优雅使用 tmux</div>
-      <div class="prev-desc">tmux 的使用为啥要用 tmux 最大的好处是可以看会话中的历史输出以及关闭窗口会, 程序会继续执行  
-所有窗口tmux ls
-新建一个会话tmux new -s bb
-进入会话tmux a...</div>
-    </a>
     
+    <a href="/2021/12/17/%E5%A6%82%E4%BD%95%E5%9C%A8-github-pages-%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AA-hexo-%E5%8D%9A%E5%AE%A2/">
+      <div class="next-title">如何在 github pages 搭建一个 hexo 博客<i class="fas fa-chevron-right"></i></div>
+      <div class="next-desc">1, 安装 node
+2, npm install -g hexo-cli
+3, 建立一个文件夹, 输入 hexo init blog
+4, hexo g 生成静态页面
+5, hexo s 建立...</div>
+    </a>
     
 </div>
 
