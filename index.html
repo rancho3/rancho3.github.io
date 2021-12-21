@@ -137,6 +137,33 @@
         <div class="post-item">
             
             <div class="post-item-info">
+                <a class="post-title" href="/2021/12/21/%E5%AD%A6%E4%B9%A0-redis-%E4%BD%9C%E4%B8%BA%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" title="学习 redis 作为消息队列 ">
+                    学习 redis 作为消息队列
+                </a>
+                <div class="post-description">
+                     
+                    pub/sub优势:支持发布订阅,阻塞接受消息,避免CPU空转支持多组生产者,消费者处理消息,可以制定规则获取缺点:丢数据消费者下线redis宕机消息堆积1,消费者下线为啥会丢消息?因为redis实时转发,没有数据存储如果所有消费者下线,那么所有消息都会丢失消费者上线后,只能接受新的消息2,消息堆积为啥会丢消息?因为redispub/sub模式中间是有一个缓冲区的,配置为client-output-buffer-limitpubsub32mb8mb60它的参数含义如下：32mb：缓冲区一旦超过32MB，Redis直接强制把消费者踢下线8mb+60：缓冲区超过8MB，并且持续60秒，Redis也会把消费者踢下线redisStream优势:1,支持阻塞式获取消息2,支持发布/订阅3,支持设置消息处理完成,不然会一直在队列中,可以重复消费4,可以持久化,支持RDB与AOF5,消息堆积时,可以限流生产者,或者丢弃旧消息如何丢弃旧消息?丢弃旧消息的意思是,保持固定长度的消息,滚动删除最早的消息XADDqueueMAXLEN10000*namezhangsanRDB与AOF是什么?RDB是r...
+                </div>
+                <div class="post-meta-wrap">
+                    <span class="post-meta-date">
+                        <i class="far fa-calendar-alt"></i>
+                        <span>发表于  </span>
+                        <span>
+                            2021-12-21
+                        </span>
+                    </span>
+                    
+    
+                    
+                </div>
+            </div>
+            
+        </div>
+        
+         
+        <div class="post-item">
+            
+            <div class="post-item-info">
                 <a class="post-title" href="/2021/12/20/tmux-%E5%8E%86%E5%8F%B2%E8%BE%93%E5%87%BA%E8%AE%B0%E5%BD%95/" title="如何优雅使用 tmux ">
                     如何优雅使用 tmux
                 </a>
@@ -219,6 +246,10 @@
                 <div class="headline">最新文章</div>
                 
                     <div class="recent-post-item card-content">
+                        <a href="/2021/12/21/%E5%AD%A6%E4%B9%A0-redis-%E4%BD%9C%E4%B8%BA%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/ ">学习 redis 作为消息队列</a>
+                    </div>
+                
+                    <div class="recent-post-item card-content">
                         <a href="/2021/12/20/tmux-%E5%8E%86%E5%8F%B2%E8%BE%93%E5%87%BA%E8%AE%B0%E5%BD%95/ ">如何优雅使用 tmux</a>
                     </div>
                 
@@ -235,7 +266,7 @@
                 
                     <div class="site-info-item card-content">
                         <div class="item-name">文章数:</div>
-                        <div class="item-content">2</div>
+                        <div class="item-content">3</div>
                     </div>
                 
                 
@@ -247,7 +278,7 @@
                 
                     <div class="site-info-item card-content">
                         <div class="item-name">本站累积字数:</div>
-                        <div class="item-content">923</div>
+                        <div class="item-content">1.6k</div>
                     </div>
                 
             </div>

@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>学习 redis 作为消息队列</title>
+      <link href="/2021/12/21/%E5%AD%A6%E4%B9%A0-redis-%E4%BD%9C%E4%B8%BA%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/"/>
+      <url>/2021/12/21/%E5%AD%A6%E4%B9%A0-redis-%E4%BD%9C%E4%B8%BA%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/</url>
+      
+        <content type="html"><![CDATA[<p>pub/sub<br>优势:</p><ol><li>支持发布订阅, 阻塞接受消息, 避免 CPU 空转  </li><li>支持多组生产者, 消费者处理消息, 可以制定规则获取  </li></ol><p>缺点:</p><ol><li>丢数据<ol><li>消费者下线</li><li>redis 宕机</li><li>消息堆积</li></ol></li></ol><p>1, 消费者下线为啥会丢消息?<br>因为 redis 实时转发, 没有数据存储<br>如果所有消费者下线, 那么所有消息都会丢失<br>消费者上线后, 只能接受新的消息  </p><p>2, 消息堆积为啥会丢消息?<br>因为 redis pub/sub 模式中间是有一个缓冲区的, 配置为  </p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">client-output-buffer-limit pubsub 32mb 8mb 60</span><br></pre></td></tr></table></figure><p>它的参数含义如下：<br>32mb：缓冲区一旦超过 32MB，Redis 直接强制把消费者踢下线<br>8mb + 60：缓冲区超过 8MB，并且持续 60 秒，Redis 也会把消费者踢下线  </p><p>redis Stream<br>优势:<br>1, 支持阻塞式获取消息<br>2, 支持发布/订阅<br>3, 支持设置消息处理完成, 不然会一直在队列中, 可以重复消费<br>4, 可以持久化, 支持 RDB 与 AOF<br>5, 消息堆积时, 可以限流生产者, 或者丢弃旧消息  </p><p>如何丢弃旧消息?<br>丢弃旧消息的意思是, 保持固定长度的消息, 滚动删除最早的消息<br>XADD queue MAXLEN 10000 * name zhangsan  </p><p>RDB 与 AOF 是什么?<br>RDB 是 redis database, 指的是将数据以快照形式写入磁盘中<br>AOF append only file 指的是执行过的写指令以日志的记录下来, 然后用来恢复  </p><p>redis 与专业的消息队列差在哪里 (比如RabbitMQ, Kafka)?  </p><ol><li>redis 作为中间件有可能会丢数据  <ol><li>AOF 持久化配置为每秒写盘，但这个写盘过程是异步的, Redis 宕机时会存在数据丢失的可能  </li><li>主从复制也是异步的，主从切换时，也存在丢失数据的可能<br> （从库还未同步完成主库发来的数据，就被提成主库）  </li></ol></li></ol><p>RabbitMQ 或 Kafka 这类专业的队列中间件, 写入数据是向多个节点写入所以一个节点坏了也没啥关系  </p><p>2, 消息堆积<br>    redis 本身是存在内存当中, 消息积压时候, 就会 out of memory (oom), 内存不够用<br>    所以, redis 用固定长度来解决这个问题, 但是会丢掉旧的数据<br>    RabbitMQ 或 Kafka 存在磁盘, 比内存便宜很多很多, 所以不怕积压消息  </p><p>比专业的消息队列好在哪里?<br>redis 比 RabbitMQ 或 Kafka 更加轻量, 不在意数据积压之后会丢失<br>以及写入量小, 可以用 redis  </p><p>根据一下链接学习:  </p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Redis 怎么做消息队列？ - Kaito的回答 - 知乎</span><br><span class="line">https://www.zhihu.com/question/20795043/answer/1931265868</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>如何优雅使用 tmux</title>
       <link href="/2021/12/20/tmux-%E5%8E%86%E5%8F%B2%E8%BE%93%E5%87%BA%E8%AE%B0%E5%BD%95/"/>
       <url>/2021/12/20/tmux-%E5%8E%86%E5%8F%B2%E8%BE%93%E5%87%BA%E8%AE%B0%E5%BD%95/</url>
