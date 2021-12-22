@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>linux mac 安全删除文件</title>
+      <link href="/2021/12/22/linux-mac-%E5%AE%89%E5%85%A8%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6/"/>
+      <url>/2021/12/22/linux-mac-%E5%AE%89%E5%85%A8%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6/</url>
+      
+        <content type="html"><![CDATA[<p>为什么需要安全删除呢, 因为删除不能后悔, 那有可能删错文件<br>那就太惨了<br>mac 我尝试了  </p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install safe-rm</span><br></pre></td></tr></table></figure><p>安装成功了, 但是删除的文件不知道到哪里去了…<br>我搜了全局, 没怎么搜到, 算了, 从 git 拉取吧  </p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mac</span><br><span class="line"></span><br><span class="line">git clone https://github.com/kaelzhang/shell-safe-rm ~/Downloads/shell-safe-rm</span><br><span class="line"></span><br><span class="line">vim ~/.zshrc</span><br><span class="line">alias rm=&#x27;~/Downloads/shell-safe-rm/bin/rm.sh&#x27;</span><br><span class="line"></span><br></pre></td></tr></table></figure><p>mac 删除的文件在 ~/.Trash<br>linux 删除的文件在 $HOME/.local/share/Trash/files (还没检验)  </p><p>参考资料  </p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://www.jianshu.com/p/f65a75aab6ac/</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>学习 redis 作为消息队列</title>
       <link href="/2021/12/21/%E5%AD%A6%E4%B9%A0-redis-%E4%BD%9C%E4%B8%BA%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/"/>
       <url>/2021/12/21/%E5%AD%A6%E4%B9%A0-redis-%E4%BD%9C%E4%B8%BA%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/</url>
