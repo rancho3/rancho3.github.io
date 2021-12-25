@@ -83,8 +83,39 @@
   
 
 
+<script>
+  const script = document.createElement('script')
+  script.src = 'https://www.googletagmanager.com/gtag/js?id=G-K020FFDXVM'
+  script.async = true
+  document.head.appendChild(script)
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-K020FFDXVM');
+</script>
 
 
+
+  
+  <script>
+    document.addEventListener('pjax:complete', function () {
+      
+      
+      if(typeof _hmt !== "undefined" && typeof _hmt.push === "function") {
+        _hmt.push(['_trackPageview',window.location.pathname]);
+      }
+      
+      
+      
+      if(typeof ga === "function") {
+        ga('send', 'pageview', window.location.href);
+      }
+      if(typeof gtag === "function"){
+        gtag('event', 'pageview', {page_location: window.location.href});
+      }
+      
+    })
+  </script>
   
 
 
