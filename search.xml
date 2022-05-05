@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>mysql快照读</title>
+      <link href="/2022/05/05/mysql%E5%BF%AB%E7%85%A7%E8%AF%BB/"/>
+      <url>/2022/05/05/mysql%E5%BF%AB%E7%85%A7%E8%AF%BB/</url>
+      
+        <content type="html"><![CDATA[<p>mysql 当前读与快照读</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">快照读就是普通查询</span><br><span class="line">select * from xx；</span><br><span class="line"></span><br><span class="line">当前读 就是想要最新的数据，类似</span><br><span class="line">select ... for update</span><br><span class="line">select ... lock in share mode</span><br><span class="line">update ...</span><br><span class="line">delete ...</span><br><span class="line">insert ...</span><br></pre></td></tr></table></figure><p>快照读就是，开启了事务，做了某些操作<br>而其他人只能读到开启事务前的数据</p><hr><p>需要了解的前置知识<br>InnoDB 跟 MyISAM 区别<br>主要是 InnoDB 支持事务，MyISAM 不支持<br>其他先不管了</p><p>参考链接:<br><a href="https://www.zhihu.com/question/20596402">https://www.zhihu.com/question/20596402</a></p><p>什么是事务？<br>我们知道事务具有ACID四个特性。也即：原子性，一致性，隔离性，持久性<br>简单来说就是<br>提交数据，连续保存 3 条数据<br>要么都成功保存<br>要么都失败，一条也不保存</p><p>如何使用事务？<br>在mysql命令框里输入<br>BEGIN 开始一个事务<br>inset xxx 插入东西<br>ROLLBACK 事务回滚<br>COMMIT 事务确认(提交)</p><p>参考连接:<br><a href="https://www.runoob.com/mysql/mysql-transaction.html">https://www.runoob.com/mysql/mysql-transaction.html</a></p><p>需要注意，MySQL 默认是会有自动提交的<br>SET AUTOCOMMIT=0 禁止自动提交<br>（只对当前页有效）</p><p>那么跟 自动提交 有啥关系呢？<br>自动提交就是 auto commit<br>比如你开了一个事务<br>begin<br>然后做了操作<br>然后又begin<br>mysql就帮你提交第二个begin之前的操作了</p><p>参考链接：<br><a href="https://blog.csdn.net/u014163312/article/details/120990961">https://blog.csdn.net/u014163312/article/details/120990961</a></p><p>事务隔离级别又有啥不同？<br>脏读<br>脏读指的是读到了其他事务未提交的数据，未提交意味着这些数据可能会回滚，<br>也就是可能最终不会存到数据库中，也就是不存在的数据。<br>读到了并一定最终存在的数据，这就是脏读。</p><p>可重复读<br>可重复读指的是在一个事务内，最开始读到的数据和事务结束前的任意时刻<br>读到的同一批数据都是一致的。通常针对数据更新（UPDATE）操作</p><p>不可重复读<br>对比可重复读，不可重复读指的是在同一事务内，<br>不同的时刻读到的同一批数据可能是不一样的，<br>可能会受到其他事务的影响，比如其他事务改了这批数据并提交了</p><p>幻读<br>幻读是针对数据插入（INSERT）操作来说的。假设事务A对某些行的内容作了更改，但是还未提交，<br>此时事务B插入了与事务A更改前的记录相同的记录行，并且在事务A提交之前先提交了，<br>而这时，在事务A中查询，会发现好像刚刚的更改对于某些数据未起作用，但其实是事务  刚插入进来的，<br>让用户感觉很魔幻，感觉出现了幻觉，这就叫幻读</p><p>参考链接：<br><a href="https://zhuanlan.zhihu.com/p/117476959">https://zhuanlan.zhihu.com/p/117476959</a>  </p><hr><p>总结一下，快照读就是<br>在 mysql 的 InnoDB 存储引擎下<br>事务隔离级别为 可重复读<br>连接数据库的 A 通过开启事务，插入了一些数据，但是没有提交<br>连接数据库的 B 查询数据，比如：<br>select * from t;<br>是查询不到 A 插入的数据的，此时为快照读<br>如果使用<br>select * from t for update;<br>这种查询语句是叫 当前读<br>就会一直等待 A 更新数据，直到超时中断查询  </p><p>其他没了，就是这么简单</p><p>这里有一个坑是，一定要使用两个终端去连接数据库，作为不同的数据库连接<br>才能验证快照读，而使用一个软件，一个终端，<br>或者在同一个软件里，会使用同一个连接去查询数据库，导致无法复现快照读<br>（坑的我有点怀疑为什么无法复现）</p><p>备注：一些操作<br>看看当前mysql的事务隔离级别<br>select @@tx_isolation;<br>执行结果<br>REPEATABLE-READ</p><p>InnoDB 存储引擎的事务隔离级别默认为：可重复读<br>查看自动提交状态<br>select @@autocommit;<br>执行结果<br>1</p><p>关闭自动提交<br>set autocommit=0;</p><p>参考链接:<br><a href="https://www.cloudcoders.cn/2021/09/16/082/">https://www.cloudcoders.cn/2021/09/16/082/</a></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>linux mac 安全删除文件</title>
       <link href="/2021/12/22/linux-mac-%E5%AE%89%E5%85%A8%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6/"/>
       <url>/2021/12/22/linux-mac-%E5%AE%89%E5%85%A8%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6/</url>

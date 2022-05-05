@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-<title>学习 redis 作为消息队列 | 必然是胡说</title>
+<title>mysql快照读 | 必然是胡说</title>
 <meta name="author" content="">
 <meta name="copyright" content="">
 
@@ -17,16 +17,16 @@
 
 
      
-    <meta name="description" content="pub&#x2F;sub优势:  支持发布订阅, 阻塞接受消息, 避免 CPU 空转   支持多组生产者, 消费者处理消息, 可以制定规则获取    缺点:  丢数据 消费者下线 redis 宕机 消息堆积    1, 消费者下线为啥会丢消息?因为 redis 实时转发, 没有数据存储如果所有消费者下线, 那么所有消息都会丢失消费者上线后, 只能接受新的消息   2, 消息堆积为啥会丢消息?因为 redis">
+    <meta name="description" content="mysql 当前读与快照读 123456789快照读就是普通查询select * from xx；当前读 就是想要最新的数据，类似select ... for updateselect ... lock in share modeupdate ...delete ...insert ... 快照读就是，开启了事务，做了某些操作而其他人只能读到开启事务前的数据  需要了解的前置知识InnoDB 跟">
 <meta property="og:type" content="article">
-<meta property="og:title" content="学习 redis 作为消息队列">
-<meta property="og:url" content="https://blog.nobady.cc/2021/12/21/%E5%AD%A6%E4%B9%A0-redis-%E4%BD%9C%E4%B8%BA%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">
+<meta property="og:title" content="mysql快照读">
+<meta property="og:url" content="https://blog.nobady.cc/2022/05/05/mysql%E5%BF%AB%E7%85%A7%E8%AF%BB/">
 <meta property="og:site_name" content="必然是胡说">
-<meta property="og:description" content="pub&#x2F;sub优势:  支持发布订阅, 阻塞接受消息, 避免 CPU 空转   支持多组生产者, 消费者处理消息, 可以制定规则获取    缺点:  丢数据 消费者下线 redis 宕机 消息堆积    1, 消费者下线为啥会丢消息?因为 redis 实时转发, 没有数据存储如果所有消费者下线, 那么所有消息都会丢失消费者上线后, 只能接受新的消息   2, 消息堆积为啥会丢消息?因为 redis">
+<meta property="og:description" content="mysql 当前读与快照读 123456789快照读就是普通查询select * from xx；当前读 就是想要最新的数据，类似select ... for updateselect ... lock in share modeupdate ...delete ...insert ... 快照读就是，开启了事务，做了某些操作而其他人只能读到开启事务前的数据  需要了解的前置知识InnoDB 跟">
 <meta property="og:locale">
 <meta property="og:image" content="https://blog.nobady.cc/img/a.webp">
-<meta property="article:published_time" content="2021-12-21T09:31:00.000Z">
-<meta property="article:modified_time" content="2021-12-22T06:54:24.978Z">
+<meta property="article:published_time" content="2022-05-05T13:08:06.000Z">
+<meta property="article:modified_time" content="2022-05-05T13:20:15.057Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://blog.nobady.cc/img/a.webp">
  
@@ -160,14 +160,14 @@
 <article id="post">
   <div class="post-info">
     <div class="post-title">
-      <h1>学习 redis 作为消息队列</h1>
+      <h1>mysql快照读</h1>
     </div>
     <div class="post-meta">
       <div class="post-date">
         <i class="far fa-calendar-alt fa-fw post-meta-icon"></i>
         <span class="post-meta-label">
           发表于
-            2021-12-21 |
+            2022-05-05 |
         </span>
         
         <i class="fas fa-history fa-fw post-meta-icon"></i>
@@ -179,49 +179,41 @@
       <div class="post-meta-wordcount">
         <i class="far fa-file-word fa-fw post-meta-icon"></i>
         <span class="post-meta-label">总字数:</span>
-        <span class="word-count">683 | </span>
+        <span class="word-count">1k | </span>
         <i class="far fa-clock fa-fw post-meta-icon"></i>
         <span class="post-meta-label">阅读时长:</span>
-        <span>2分钟</span>
+        <span>3分钟</span>
         
       </div>
     </div>
   </div>
   <div class="post-content">
-    <p>pub/sub<br>优势:</p>
-<ol>
-<li>支持发布订阅, 阻塞接受消息, 避免 CPU 空转  </li>
-<li>支持多组生产者, 消费者处理消息, 可以制定规则获取  </li>
-</ol>
-<p>缺点:</p>
-<ol>
-<li>丢数据<ol>
-<li>消费者下线</li>
-<li>redis 宕机</li>
-<li>消息堆积</li>
-</ol>
-</li>
-</ol>
-<p>1, 消费者下线为啥会丢消息?<br>因为 redis 实时转发, 没有数据存储<br>如果所有消费者下线, 那么所有消息都会丢失<br>消费者上线后, 只能接受新的消息  </p>
-<p>2, 消息堆积为啥会丢消息?<br>因为 redis pub/sub 模式中间是有一个缓冲区的, 配置为  </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">client-output-buffer-limit pubsub 32mb 8mb 60</span><br></pre></td></tr></table></figure>
-<p>它的参数含义如下：<br>32mb：缓冲区一旦超过 32MB，Redis 直接强制把消费者踢下线<br>8mb + 60：缓冲区超过 8MB，并且持续 60 秒，Redis 也会把消费者踢下线  </p>
-<p>redis Stream<br>优势:<br>1, 支持阻塞式获取消息<br>2, 支持发布/订阅<br>3, 支持设置消息处理完成, 不然会一直在队列中, 可以重复消费<br>4, 可以持久化, 支持 RDB 与 AOF<br>5, 消息堆积时, 可以限流生产者, 或者丢弃旧消息  </p>
-<p>如何丢弃旧消息?<br>丢弃旧消息的意思是, 保持固定长度的消息, 滚动删除最早的消息<br>XADD queue MAXLEN 10000 * name zhangsan  </p>
-<p>RDB 与 AOF 是什么?<br>RDB 是 redis database, 指的是将数据以快照形式写入磁盘中<br>AOF append only file 指的是执行过的写指令以日志的记录下来, 然后用来恢复  </p>
-<p>redis 与专业的消息队列差在哪里 (比如RabbitMQ, Kafka)?  </p>
-<ol>
-<li>redis 作为中间件有可能会丢数据  <ol>
-<li>AOF 持久化配置为每秒写盘，但这个写盘过程是异步的, Redis 宕机时会存在数据丢失的可能  </li>
-<li>主从复制也是异步的，主从切换时，也存在丢失数据的可能<br> （从库还未同步完成主库发来的数据，就被提成主库）  </li>
-</ol>
-</li>
-</ol>
-<p>RabbitMQ 或 Kafka 这类专业的队列中间件, 写入数据是向多个节点写入所以一个节点坏了也没啥关系  </p>
-<p>2, 消息堆积<br>    redis 本身是存在内存当中, 消息积压时候, 就会 out of memory (oom), 内存不够用<br>    所以, redis 用固定长度来解决这个问题, 但是会丢掉旧的数据<br>    RabbitMQ 或 Kafka 存在磁盘, 比内存便宜很多很多, 所以不怕积压消息  </p>
-<p>比专业的消息队列好在哪里?<br>redis 比 RabbitMQ 或 Kafka 更加轻量, 不在意数据积压之后会丢失<br>以及写入量小, 可以用 redis  </p>
-<p>根据一下链接学习:  </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Redis 怎么做消息队列？ - Kaito的回答 - 知乎</span><br><span class="line">https://www.zhihu.com/question/20795043/answer/1931265868</span><br></pre></td></tr></table></figure>
+    <p>mysql 当前读与快照读</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">快照读就是普通查询</span><br><span class="line">select * from xx；</span><br><span class="line"></span><br><span class="line">当前读 就是想要最新的数据，类似</span><br><span class="line">select ... for update</span><br><span class="line">select ... lock in share mode</span><br><span class="line">update ...</span><br><span class="line">delete ...</span><br><span class="line">insert ...</span><br></pre></td></tr></table></figure>
+<p>快照读就是，开启了事务，做了某些操作<br>而其他人只能读到开启事务前的数据</p>
+<hr>
+<p>需要了解的前置知识<br>InnoDB 跟 MyISAM 区别<br>主要是 InnoDB 支持事务，MyISAM 不支持<br>其他先不管了</p>
+<p>参考链接:<br><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/20596402">https://www.zhihu.com/question/20596402</a></p>
+<p>什么是事务？<br>我们知道事务具有ACID四个特性。也即：原子性，一致性，隔离性，持久性<br>简单来说就是<br>提交数据，连续保存 3 条数据<br>要么都成功保存<br>要么都失败，一条也不保存</p>
+<p>如何使用事务？<br>在mysql命令框里输入<br>BEGIN 开始一个事务<br>inset xxx 插入东西<br>ROLLBACK 事务回滚<br>COMMIT 事务确认(提交)</p>
+<p>参考连接:<br><a target="_blank" rel="noopener" href="https://www.runoob.com/mysql/mysql-transaction.html">https://www.runoob.com/mysql/mysql-transaction.html</a></p>
+<p>需要注意，MySQL 默认是会有自动提交的<br>SET AUTOCOMMIT=0 禁止自动提交<br>（只对当前页有效）</p>
+<p>那么跟 自动提交 有啥关系呢？<br>自动提交就是 auto commit<br>比如你开了一个事务<br>begin<br>然后做了操作<br>然后又begin<br>mysql就帮你提交第二个begin之前的操作了</p>
+<p>参考链接：<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/u014163312/article/details/120990961">https://blog.csdn.net/u014163312/article/details/120990961</a></p>
+<p>事务隔离级别又有啥不同？<br>脏读<br>脏读指的是读到了其他事务未提交的数据，未提交意味着这些数据可能会回滚，<br>也就是可能最终不会存到数据库中，也就是不存在的数据。<br>读到了并一定最终存在的数据，这就是脏读。</p>
+<p>可重复读<br>可重复读指的是在一个事务内，最开始读到的数据和事务结束前的任意时刻<br>读到的同一批数据都是一致的。通常针对数据更新（UPDATE）操作</p>
+<p>不可重复读<br>对比可重复读，不可重复读指的是在同一事务内，<br>不同的时刻读到的同一批数据可能是不一样的，<br>可能会受到其他事务的影响，比如其他事务改了这批数据并提交了</p>
+<p>幻读<br>幻读是针对数据插入（INSERT）操作来说的。假设事务A对某些行的内容作了更改，但是还未提交，<br>此时事务B插入了与事务A更改前的记录相同的记录行，并且在事务A提交之前先提交了，<br>而这时，在事务A中查询，会发现好像刚刚的更改对于某些数据未起作用，但其实是事务  刚插入进来的，<br>让用户感觉很魔幻，感觉出现了幻觉，这就叫幻读</p>
+<p>参考链接：<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/117476959">https://zhuanlan.zhihu.com/p/117476959</a>  </p>
+<hr>
+<p>总结一下，快照读就是<br>在 mysql 的 InnoDB 存储引擎下<br>事务隔离级别为 可重复读<br>连接数据库的 A 通过开启事务，插入了一些数据，但是没有提交<br>连接数据库的 B 查询数据，比如：<br>select * from t;<br>是查询不到 A 插入的数据的，此时为快照读<br>如果使用<br>select * from t for update;<br>这种查询语句是叫 当前读<br>就会一直等待 A 更新数据，直到超时中断查询  </p>
+<p>其他没了，就是这么简单</p>
+<p>这里有一个坑是，一定要使用两个终端去连接数据库，作为不同的数据库连接<br>才能验证快照读，而使用一个软件，一个终端，<br>或者在同一个软件里，会使用同一个连接去查询数据库，导致无法复现快照读<br>（坑的我有点怀疑为什么无法复现）</p>
+<p>备注：一些操作<br>看看当前mysql的事务隔离级别<br>select @@tx_isolation;<br>执行结果<br>REPEATABLE-READ</p>
+<p>InnoDB 存储引擎的事务隔离级别默认为：可重复读<br>查看自动提交状态<br>select @@autocommit;<br>执行结果<br>1</p>
+<p>关闭自动提交<br>set autocommit=0;</p>
+<p>参考链接:<br><a target="_blank" rel="noopener" href="https://www.cloudcoders.cn/2021/09/16/082/">https://www.cloudcoders.cn/2021/09/16/082/</a></p>
+
   </div>
    
    
@@ -238,14 +230,14 @@
       <div class="post-copyright-type">
           <span class="post-copyright-meta">文章链接: </span>
             <span class="post-copyright-info">
-              <a href="https://blog.nobady.cc/2021/12/21/学习-redis-作为消息队列/" >https://blog.nobady.cc/2021/12/21/学习-redis-作为消息队列/</a>
+              <a href="https://blog.nobady.cc/2022/05/05/mysql快照读/" >https://blog.nobady.cc/2022/05/05/mysql快照读/</a>
             </span>
       </div><div class="post-copyright-notice">
           <span class="post-copyright-meta">版权声明: </span>
             <span class="post-copyright-info">本博客所有文章除特别声明外，均采用
               <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/ " target="_blank" >
                   CC BY-NC-SA 4.0 </a> 许可协议。转载请注明来自
-              <a href="https://blog.nobady.cc/2021/12/21/学习-redis-作为消息队列/" target="_blank" >blog.nobady.cc</a>
+              <a href="https://blog.nobady.cc/2022/05/05/mysql快照读/" target="_blank" >blog.nobady.cc</a>
               ！</span>
       </div>
   </div>
@@ -259,20 +251,12 @@
 
 <div class="pagination-post">
     
+    
     <a href="/2021/12/22/linux-mac-%E5%AE%89%E5%85%A8%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6/">
-      <div class="prev-title"><i class="fas fa-chevron-left"></i>linux mac 安全删除文件</div>
-      <div class="prev-desc">为什么需要安全删除呢, 因为删除不能后悔, 那有可能删错文件那就太惨了mac 我尝试了  
+      <div class="next-title">linux mac 安全删除文件<i class="fas fa-chevron-right"></i></div>
+      <div class="next-desc">为什么需要安全删除呢, 因为删除不能后悔, 那有可能删错文件那就太惨了mac 我尝试了  
 1brew install safe-rm
 安装成功了, 但是删除的文件不知道到哪里去了…我搜了全局,...</div>
-    </a>
-    
-    
-    <a href="/2021/12/20/tmux-%E5%8E%86%E5%8F%B2%E8%BE%93%E5%87%BA%E8%AE%B0%E5%BD%95/">
-      <div class="next-title">如何优雅使用 tmux<i class="fas fa-chevron-right"></i></div>
-      <div class="next-desc">tmux 的使用为啥要用 tmux 最大的好处是可以看会话中的历史输出以及关闭窗口会, 程序会继续执行  
-所有窗口tmux ls
-新建一个会话tmux new -s bb
-进入会话tmux a...</div>
     </a>
     
 </div>
