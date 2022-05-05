@@ -180,7 +180,7 @@
                 </a>
                 <div class="post-description">
                      
-                    mysql当前读与快照读快照读就是普通查询select*fromxx；当前读就是想要最新的数据，类似select...forupdateselect...lockinsharemodeupdate...delete...insert...快照读就是，开启了事务，做了某些操作而其他人只能读到开启事务前的数据需要了解的前置知识InnoDB跟MyISAM区别主要是InnoDB支持事务，MyISAM不支持其他先不管了参考链接:https://www.zhihu.com/question/20596402什么是事务？我们知道事务具有ACID四个特性。也即：原子性，一致性，隔离性，持久性简单来说就是提交数据，连续保存3条数据要么都成功保存要么都失败，一条也不保存如何使用事务？在mysql命令框里输入BEGIN开始一个事务insetxxx插入东西ROLLBACK事务回滚COMMIT事务确认(提交)参考连接:https://www.runoob.com/mysql/mysql-transaction.html需要注意，MySQL默认是会有自动提交的SETAUTOCOMMIT=0禁止自动提交（只对...
+                    mysql当前读与快照读快照读就是普通查询select*fromxx；当前读就是想要最新的数据，类似select...forupdateselect...lockinsharemodeupdate...delete...insert...简单来说，快照读就是在mysql的“InnoDB”存储引擎下事务隔离级别为“可重复读”连接数据库的A通过开启“事务”，插入了一些数据，但是没有提交（commit）连接数据库的B查询数据，比如：select*fromt;是查询不到A插入的数据的，此时为快照读如果使用select*fromtforupdate;这种查询语句是叫当前读就会一直等待A提交数据（commit），如果没有，那么就直到超时中断查询其他没了，就是这么简单需要了解的前置知识以上有三个地方需要注意，分别是“InnoDB”、“事务”、“可重复读”mysql有这两种存储引擎InnoDB跟MyISAM主要区别是InnoDB支持事务，MyISAM不支持其他先不管了参考链接:https://www.zhihu.com/question/20596402那么什么是事务？事务具有ACID四个特性。...
                 </div>
                 <div class="post-meta-wrap">
                     <span class="post-meta-date">
