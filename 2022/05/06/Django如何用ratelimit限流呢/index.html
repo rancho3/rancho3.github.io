@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
-<title>学习 redis 作为消息队列 | 必然是胡说</title>
+<title>Django如何用ratelimit限流呢 | 必然是胡说</title>
 <meta name="author" content="">
 <meta name="copyright" content="">
 
@@ -17,16 +17,16 @@
 
 
      
-    <meta name="description" content="pub&#x2F;sub优势:  支持发布订阅, 阻塞接受消息, 避免 CPU 空转   支持多组生产者, 消费者处理消息, 可以制定规则获取    缺点:  丢数据 消费者下线 redis 宕机 消息堆积    1, 消费者下线为啥会丢消息?因为 redis 实时转发, 没有数据存储如果所有消费者下线, 那么所有消息都会丢失消费者上线后, 只能接受新的消息   2, 消息堆积为啥会丢消息?因为 redis">
+    <meta name="description" content="Django 如何用 ratelimit 限流呢比如一个post请求 123456789101112131415161718192021class ApiAssignmentTake(View):    @method_decorator(ratelimit(group&#x3D;&amp;#x27;assignment&amp;#x27;, key&#x3D;lambda g, r: str(r.user.id), rate&#x3D;&amp;#">
 <meta property="og:type" content="article">
-<meta property="og:title" content="学习 redis 作为消息队列">
-<meta property="og:url" content="https://blog.nobady.cc/2021/12/21/%E5%AD%A6%E4%B9%A0-redis-%E4%BD%9C%E4%B8%BA%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">
+<meta property="og:title" content="Django如何用ratelimit限流呢">
+<meta property="og:url" content="https://blog.nobady.cc/2022/05/06/Django%E5%A6%82%E4%BD%95%E7%94%A8ratelimit%E9%99%90%E6%B5%81%E5%91%A2/">
 <meta property="og:site_name" content="必然是胡说">
-<meta property="og:description" content="pub&#x2F;sub优势:  支持发布订阅, 阻塞接受消息, 避免 CPU 空转   支持多组生产者, 消费者处理消息, 可以制定规则获取    缺点:  丢数据 消费者下线 redis 宕机 消息堆积    1, 消费者下线为啥会丢消息?因为 redis 实时转发, 没有数据存储如果所有消费者下线, 那么所有消息都会丢失消费者上线后, 只能接受新的消息   2, 消息堆积为啥会丢消息?因为 redis">
+<meta property="og:description" content="Django 如何用 ratelimit 限流呢比如一个post请求 123456789101112131415161718192021class ApiAssignmentTake(View):    @method_decorator(ratelimit(group&#x3D;&amp;#x27;assignment&amp;#x27;, key&#x3D;lambda g, r: str(r.user.id), rate&#x3D;&amp;#">
 <meta property="og:locale">
 <meta property="og:image" content="https://blog.nobady.cc/img/a.webp">
-<meta property="article:published_time" content="2021-12-21T09:31:00.000Z">
-<meta property="article:modified_time" content="2021-12-22T06:54:24.978Z">
+<meta property="article:published_time" content="2022-05-06T07:49:33.000Z">
+<meta property="article:modified_time" content="2022-05-06T07:57:12.323Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://blog.nobady.cc/img/a.webp">
  
@@ -160,14 +160,14 @@
 <article id="post">
   <div class="post-info">
     <div class="post-title">
-      <h1>学习 redis 作为消息队列</h1>
+      <h1>Django如何用ratelimit限流呢</h1>
     </div>
     <div class="post-meta">
       <div class="post-date">
         <i class="far fa-calendar-alt fa-fw post-meta-icon"></i>
         <span class="post-meta-label">
           发表于
-            2021-12-21 |
+            2022-05-06 |
         </span>
         
         <i class="fas fa-history fa-fw post-meta-icon"></i>
@@ -179,49 +179,25 @@
       <div class="post-meta-wordcount">
         <i class="far fa-file-word fa-fw post-meta-icon"></i>
         <span class="post-meta-label">总字数:</span>
-        <span class="word-count">683 | </span>
+        <span class="word-count">427 | </span>
         <i class="far fa-clock fa-fw post-meta-icon"></i>
         <span class="post-meta-label">阅读时长:</span>
-        <span>2分钟</span>
+        <span>1分钟</span>
         
       </div>
     </div>
   </div>
   <div class="post-content">
-    <p>pub/sub<br>优势:</p>
-<ol>
-<li>支持发布订阅, 阻塞接受消息, 避免 CPU 空转  </li>
-<li>支持多组生产者, 消费者处理消息, 可以制定规则获取  </li>
-</ol>
-<p>缺点:</p>
-<ol>
-<li>丢数据<ol>
-<li>消费者下线</li>
-<li>redis 宕机</li>
-<li>消息堆积</li>
-</ol>
-</li>
-</ol>
-<p>1, 消费者下线为啥会丢消息?<br>因为 redis 实时转发, 没有数据存储<br>如果所有消费者下线, 那么所有消息都会丢失<br>消费者上线后, 只能接受新的消息  </p>
-<p>2, 消息堆积为啥会丢消息?<br>因为 redis pub/sub 模式中间是有一个缓冲区的, 配置为  </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">client-output-buffer-limit pubsub 32mb 8mb 60</span><br></pre></td></tr></table></figure>
-<p>它的参数含义如下：<br>32mb：缓冲区一旦超过 32MB，Redis 直接强制把消费者踢下线<br>8mb + 60：缓冲区超过 8MB，并且持续 60 秒，Redis 也会把消费者踢下线  </p>
-<p>redis Stream<br>优势:<br>1, 支持阻塞式获取消息<br>2, 支持发布/订阅<br>3, 支持设置消息处理完成, 不然会一直在队列中, 可以重复消费<br>4, 可以持久化, 支持 RDB 与 AOF<br>5, 消息堆积时, 可以限流生产者, 或者丢弃旧消息  </p>
-<p>如何丢弃旧消息?<br>丢弃旧消息的意思是, 保持固定长度的消息, 滚动删除最早的消息<br>XADD queue MAXLEN 10000 * name zhangsan  </p>
-<p>RDB 与 AOF 是什么?<br>RDB 是 redis database, 指的是将数据以快照形式写入磁盘中<br>AOF append only file 指的是执行过的写指令以日志的记录下来, 然后用来恢复  </p>
-<p>redis 与专业的消息队列差在哪里 (比如RabbitMQ, Kafka)?  </p>
-<ol>
-<li>redis 作为中间件有可能会丢数据  <ol>
-<li>AOF 持久化配置为每秒写盘，但这个写盘过程是异步的, Redis 宕机时会存在数据丢失的可能  </li>
-<li>主从复制也是异步的，主从切换时，也存在丢失数据的可能<br> （从库还未同步完成主库发来的数据，就被提成主库）  </li>
-</ol>
-</li>
-</ol>
-<p>RabbitMQ 或 Kafka 这类专业的队列中间件, 写入数据是向多个节点写入所以一个节点坏了也没啥关系  </p>
-<p>2, 消息堆积<br>    redis 本身是存在内存当中, 消息积压时候, 就会 out of memory (oom), 内存不够用<br>    所以, redis 用固定长度来解决这个问题, 但是会丢掉旧的数据<br>    RabbitMQ 或 Kafka 存在磁盘, 比内存便宜很多很多, 所以不怕积压消息  </p>
-<p>比专业的消息队列好在哪里?<br>redis 比 RabbitMQ 或 Kafka 更加轻量, 不在意数据积压之后会丢失<br>以及写入量小, 可以用 redis  </p>
-<p>根据一下链接学习:  </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Redis 怎么做消息队列？ - Kaito的回答 - 知乎</span><br><span class="line">https://www.zhihu.com/question/20795043/answer/1931265868</span><br></pre></td></tr></table></figure>
+    <p>Django 如何用 ratelimit 限流呢<br>比如一个post请求</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ApiAssignmentTake</span>(<span class="params">View</span>):</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @method_decorator(<span class="params">ratelimit(<span class="params">group=<span class="string">&#x27;assignment&#x27;</span>, key=<span class="keyword">lambda</span> g, r: <span class="built_in">str</span>(<span class="params">r.user.<span class="built_in">id</span></span>), rate=<span class="string">&#x27;10/60s&#x27;</span>, block=<span class="literal">True</span></span>)</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span>(<span class="params">self, request: AuthRequest</span>) -&gt; <span class="type">Dict</span>:</span></span><br><span class="line">        producer_id: <span class="built_in">int</span> = request.user.<span class="built_in">id</span></span><br><span class="line">        user_role: <span class="built_in">str</span> = request.user.role</span><br><span class="line"></span><br><span class="line">        center_take: ServiceAssignmentCenterTake = ServiceAssignmentCenterTake(</span><br><span class="line">            producer_id,</span><br><span class="line">            user_role,</span><br><span class="line">        )</span><br><span class="line">        data = center_take.get_data()</span><br><span class="line">        <span class="keyword">return</span> data</span><br><span class="line"></span><br><span class="line">注意这个 </span><br><span class="line"><span class="meta">@method_decorator(<span class="params">ratelimit(<span class="params">group=<span class="string">&#x27;assignment&#x27;</span>, key=<span class="keyword">lambda</span> g, r: <span class="built_in">str</span>(<span class="params">r.user.<span class="built_in">id</span></span>), rate=<span class="string">&#x27;10/60s&#x27;</span>, block=<span class="literal">True</span></span>)</span>)</span></span><br><span class="line"></span><br><span class="line">group指的是同个组共用限制</span><br><span class="line">key 可以是 ip</span><br><span class="line">但有时候需要用user，就需要写函数去接</span><br><span class="line"><span class="number">10</span>/60s 是说，<span class="number">60</span>秒内，<span class="number">10</span>次  </span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">然后超过就会抛出一个异常，这个异常会走中间件，所以需要在中间件的地方处理</span><br><span class="line"></span><br><span class="line">在Django的setting文件中加上这两个东西</span><br><span class="line">ratelimit.middleware.RatelimitMiddleware 似乎需要加到所有中间件最后</span><br><span class="line">//中间件配置</span><br><span class="line">MIDDLEWARE = [</span><br><span class="line">    <span class="string">&quot;ratelimit.middleware.RatelimitMiddleware&quot;</span>,</span><br><span class="line">]</span><br><span class="line">//全局变量，让RatelimitMiddleware这个中间件去导入函数</span><br><span class="line">//ratelimit 文件的位置在项目的第一层目录</span><br><span class="line">RATELIMIT_VIEW = <span class="string">&#x27;ratelimit.ratelimit_process&#x27;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">加上这个中间件，可以打开这个中间看看</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RatelimitMiddleware</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, get_response</span>):</span></span><br><span class="line">        self.get_response = get_response</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__call__</span>(<span class="params">self, request</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self.get_response(request)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_exception</span>(<span class="params">self, request, exception</span>):</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(exception, Ratelimited):</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">        view = import_string(settings.RATELIMIT_VIEW)</span><br><span class="line">        <span class="keyword">return</span> view(request, exception)</span><br><span class="line"></span><br><span class="line">import_string 就是导入 ratelimit 文件中的 ratelimit_process 函数，然后执行，</span><br><span class="line"></span><br><span class="line">所以还需要在 ratelimit 文件写 ratelimit_process 函数</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">ratelimit_process</span>(<span class="params">request, exception</span>):</span></span><br><span class="line">    user_label = request.user</span><br><span class="line">    userSessionManager.delete(user_label.<span class="built_in">id</span>)</span><br><span class="line">    resp = <span class="string">&quot;Please login again, too many request&quot;</span></span><br><span class="line">    <span class="keyword">return</span> HttpResponse(resp, status=status.HTTP_429_TOO_MANY_REQUESTS, content_type=<span class="string">&quot;application/json&quot;</span>)</span><br><span class="line"></span><br><span class="line">在这里面可以自定义处理，让他退出登陆了</span><br></pre></td></tr></table></figure>
+
+<p>参考链接：<br><a target="_blank" rel="noopener" href="https://django-ratelimit.readthedocs.io/en/stable/usage.html#exceptions">https://django-ratelimit.readthedocs.io/en/stable/usage.html#exceptions</a></p>
+<p>django还有自带的限流<br>随便搜了一个，我还没看，目前用不到<br>参考链接：<br>关键词是:Throttling<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_31455841/article/details/109606577">https://blog.csdn.net/qq_31455841/article/details/109606577</a></p>
+
   </div>
    
    
@@ -238,14 +214,14 @@
       <div class="post-copyright-type">
           <span class="post-copyright-meta">文章链接: </span>
             <span class="post-copyright-info">
-              <a href="https://blog.nobady.cc/2021/12/21/学习-redis-作为消息队列/" >https://blog.nobady.cc/2021/12/21/学习-redis-作为消息队列/</a>
+              <a href="https://blog.nobady.cc/2022/05/06/Django如何用ratelimit限流呢/" >https://blog.nobady.cc/2022/05/06/Django如何用ratelimit限流呢/</a>
             </span>
       </div><div class="post-copyright-notice">
           <span class="post-copyright-meta">版权声明: </span>
             <span class="post-copyright-info">本博客所有文章除特别声明外，均采用
               <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/ " target="_blank" >
                   CC BY-NC-SA 4.0 </a> 许可协议。转载请注明来自
-              <a href="https://blog.nobady.cc/2021/12/21/学习-redis-作为消息队列/" target="_blank" >blog.nobady.cc</a>
+              <a href="https://blog.nobady.cc/2022/05/06/Django如何用ratelimit限流呢/" target="_blank" >blog.nobady.cc</a>
               ！</span>
       </div>
   </div>
@@ -259,20 +235,11 @@
 
 <div class="pagination-post">
     
-    <a href="/2021/12/22/linux-mac-%E5%AE%89%E5%85%A8%E5%88%A0%E9%99%A4%E6%96%87%E4%BB%B6/">
-      <div class="prev-title"><i class="fas fa-chevron-left"></i>linux mac 安全删除文件</div>
-      <div class="prev-desc">为什么需要安全删除呢, 因为删除不能后悔, 那有可能删错文件那就太惨了mac 我尝试了  
-1brew install safe-rm
-安装成功了, 但是删除的文件不知道到哪里去了…我搜了全局,...</div>
-    </a>
     
-    
-    <a href="/2021/12/20/tmux-%E5%8E%86%E5%8F%B2%E8%BE%93%E5%87%BA%E8%AE%B0%E5%BD%95/">
-      <div class="next-title">如何优雅使用 tmux<i class="fas fa-chevron-right"></i></div>
-      <div class="next-desc">tmux 的使用为啥要用 tmux 最大的好处是可以看会话中的历史输出以及关闭窗口会, 程序会继续执行  
-所有窗口tmux ls
-新建一个会话tmux new -s bb
-进入会话tmux a...</div>
+    <a href="/2022/05/05/mysql%E5%BF%AB%E7%85%A7%E8%AF%BB/">
+      <div class="next-title">mysql快照读<i class="fas fa-chevron-right"></i></div>
+      <div class="next-desc">mysql 当前读与快照读
+123456789快照读就是普通查询select * from xx；当前读 就是想要最新的数据，类似select ... for updateselect ... ...</div>
     </a>
     
 </div>
